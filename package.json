@@ -1,0 +1,8 @@
+{
+  "name": "daily-news-app",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "validate": "node tools/validate.mjs"
+  }
+}

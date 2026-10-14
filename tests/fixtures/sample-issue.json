@@ -1,0 +1,306 @@
+{
+ "date": "2026-10-14",
+ "window_pt": "10-13 06:50 → 10-14 06:50 PT",
+ "cutoff_pt": "2026-10-14 06:40 PT",
+ "tldr": [
+  "示例：车企三季度交付创新高",
+  "示例：国产大模型发布新版本",
+  "示例：国庆档后票房回落"
+ ],
+ "takeaway": "这是本地测试用的示例数据，不是真实新闻。",
+ "hero": {
+  "label": "恒生科技指数（示例）",
+  "value": "5,820",
+  "unit": "点",
+  "change": "+1.8%",
+  "dir": "up",
+  "series": [
+   {
+    "x": "10-08",
+    "y": 5600
+   },
+   {
+    "x": "10-09",
+    "y": 5650
+   },
+   {
+    "x": "10-10",
+    "y": 5590
+   },
+   {
+    "x": "10-13",
+    "y": 5717
+   },
+   {
+    "x": "10-14",
+    "y": 5820
+   }
+  ],
+  "source": {
+   "name": "示例来源",
+   "url": "https://example.com/h"
+  }
+ },
+ "markets": [
+  {
+   "label": "上证指数",
+   "value": "3,900",
+   "change": "-0.3%",
+   "dir": "down",
+   "source_url": "https://example.com/m"
+  },
+  {
+   "label": "纳指",
+   "value": "22,000",
+   "change": "+0.5%",
+   "dir": "up",
+   "source_url": "https://example.com/m"
+  },
+  {
+   "label": "美元/人民币",
+   "value": "7.10",
+   "change": "0.0%",
+   "dir": "flat",
+   "source_url": "https://example.com/m"
+  }
+ ],
+ "stories": [
+  {
+   "id": "s1",
+   "region": "cn",
+   "category": "business",
+   "importance": "high",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第1条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ],
+   "headline_number": {
+    "value": "+38%",
+    "label": "同比"
+   },
+   "chart": {
+    "type": "line",
+    "unit": "万辆",
+    "points": [
+     {
+      "x": "Q1",
+      "y": 30
+     },
+     {
+      "x": "Q2",
+      "y": 36
+     },
+     {
+      "x": "Q3",
+      "y": 42
+     }
+    ],
+    "source_url": "https://example.com/c"
+   }
+  },
+  {
+   "id": "s2",
+   "region": "cn",
+   "category": "business",
+   "importance": "high",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第2条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "region": "cn",
+   "category": "tech",
+   "importance": "medium",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第3条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ]
+  },
+  {
+   "id": "s4",
+   "region": "cn",
+   "category": "tech",
+   "importance": "medium",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第4条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ]
+  },
+  {
+   "id": "s5",
+   "region": "cn",
+   "category": "business",
+   "importance": "medium",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第5条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ]
+  },
+  {
+   "id": "s6",
+   "region": "cn",
+   "category": "ent",
+   "importance": "medium",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第6条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ],
+   "headline_number": {
+    "value": "¥12.3亿",
+    "label": "首周票房"
+   }
+  },
+  {
+   "id": "s7",
+   "region": "cn",
+   "category": "tech",
+   "importance": "medium",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第7条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ]
+  },
+  {
+   "id": "s8",
+   "region": "global",
+   "category": "business",
+   "importance": "medium",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第8条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ]
+  },
+  {
+   "id": "s9",
+   "region": "global",
+   "category": "tech",
+   "importance": "medium",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第9条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ]
+  },
+  {
+   "id": "s10",
+   "region": "global",
+   "category": "ent",
+   "importance": "medium",
+   "credibility": "confirmed",
+   "title": "示例新闻标题第10条",
+   "hook": "示例：一句话说清楚这件事最关键的一点。",
+   "points": [
+    "示例要点一",
+    "示例要点二"
+   ],
+   "why": "示例：说明这件事通过什么机制影响谁的成本或收入。",
+   "sources": [
+    {
+     "name": "示例来源",
+     "url": "https://example.com/a"
+    }
+   ]
+  }
+ ],
+ "upcoming": [
+  {
+   "when": "10-15 周三",
+   "what": "示例：某公司发布三季报"
+  },
+  {
+   "when": "10-16 周四",
+   "what": "示例：中国三季度 GDP"
+  }
+ ]
+}
