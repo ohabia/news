@@ -82,6 +82,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .spark svg{display:block;width:100%;height:auto;overflow:visible}
 .spark .line{fill:none;stroke:var(--ink);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
 .spark .area{fill:var(--ink);opacity:.06}
+.spark .barmark{fill:var(--ink-3);opacity:.45} .spark .barmark.last{fill:var(--ink);opacity:1}
 .spark .end{fill:var(--card-solid);stroke:var(--ink);stroke-width:2}
 .spark .bubble{position:absolute;transform:translate(-50%,-130%);background:var(--ink);color:var(--card-solid);font-family:var(--f-num);font-size:12px;
   padding:3px 9px;border-radius:999px;white-space:nowrap;pointer-events:none}
@@ -183,7 +184,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 <div class="app" id="app">
   <section class="view" data-view="today" id="v-today">
-    <div class="card empty"><h2>正在加载今天的速读</h2><p>每天早上 7 点左右（太平洋时间）更新</p></div>
+    <div class="card empty loading"><h2>正在加载今天的速读</h2><p>每天早上 7 点左右（太平洋时间）更新</p></div>
   </section>
   <section class="view reader" data-view="read" id="v-read" hidden aria-roledescription="carousel" aria-label="今日新闻"></section>
   <section class="view" data-view="archive" id="v-archive" hidden></section>
@@ -265,11 +266,23 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     return c;
   }
 
-  function sparkline(series, w, h, valueText) {
+  function sparkline(series, w, h, valueText, type) {
     var box = el("div", "spark");
     var g = L.sparkGeometry(series, w, h, 6);
     var s = svg("svg", { viewBox: "0 0 " + w + " " + h, role: "img", "aria-label": "走势：" + series.map(function (p) { return (p.x || "") + " " + p.y; }).join("，") });
-    s.append(svg("path", { d: g.area, class: "area" }), svg("path", { d: g.line, class: "line" }), svg("circle", { cx: g.last.x, cy: g.last.y, r: 4.5, class: "end" }));
+    if (type === "bar") {
+      // bars anchored to a zero baseline (or the minimum when values are negative), 2px gaps
+      var lo = Math.min(0, g.min), hi = Math.max(0, g.max), n = series.length, pad = 6;
+      var slot = (w - 2 * pad) / n, bw = Math.max(4, slot - 6);
+      var yOf = function (y) { return hi === lo ? h / 2 : pad + (hi - y) * (h - 2 * pad) / (hi - lo); };
+      series.forEach(function (p, i) {
+        var y0 = yOf(0), y1 = yOf(p.y), x = pad + i * slot + (slot - bw) / 2;
+        s.appendChild(svg("rect", { x: x.toFixed(1), y: Math.min(y0, y1).toFixed(1), width: bw.toFixed(1), height: Math.max(1, Math.abs(y1 - y0)).toFixed(1), rx: 4, class: "barmark" + (i === n - 1 ? " last" : "") }));
+      });
+      g = { last: { x: pad + (n - 0.5) * slot, y: yOf(series[n - 1].y) } };
+    } else {
+      s.append(svg("path", { d: g.area, class: "area" }), svg("path", { d: g.line, class: "line" }), svg("circle", { cx: g.last.x, cy: g.last.y, r: 4.5, class: "end" }));
+    }
     box.appendChild(s);
     if (valueText) {
       var b = el("span", "bubble", valueText);
@@ -296,7 +309,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
     var top = el("header", "top");
     var left = el("div");
-    left.append(el("div", "date", dp.m + "月" + dp.d + "日 " + dp.wd), el("h1", null, greeting() + "，今天 " + S.length + " 条"));
+    var latest = !(state.index && state.index.issues && state.index.issues.length) || state.index.issues[0].date === I.date;
+    left.append(el("div", "date", dp.m + "月" + dp.d + "日 " + dp.wd),
+      el("h1", null, latest ? greeting() + "，今天 " + S.length + " 条" : dp.m + "月" + dp.d + "日 · " + S.length + " 条"));
     var ring = el("div", "ring"); ring.id = "ring";
     var rs = svg("svg", { viewBox: "0 0 52 52", "aria-hidden": "true" });
     rs.append(svg("circle", { cx: 26, cy: 26, r: 22, class: "t" }), svg("circle", { cx: 26, cy: 26, r: 22, class: "b", transform: "rotate(-90 26 26)", "stroke-dasharray": "138.2", "stroke-dashoffset": "138.2" }));
@@ -325,6 +340,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
       v.appendChild(hc);
     }
 
+    if (!S.length) {
+      v.appendChild(emptyCard("今天没有通过核查的新闻", "宁缺毋滥：过去 24 小时没有足够可靠的商业、科技、娱乐消息。明早再来"));
+      v.appendChild(el("p", "label", "覆盖 " + (I.window_pt || "") + " · 信息截至 " + (I.cutoff_pt || "")));
+      updateRing();
+      return;
+    }
     var m = L.mixStats(S), mc = el("article", "card mix");
     mc.appendChild(el("div", "label", "今天的构成"));
     var bar = el("div", "bar"); bar.setAttribute("aria-hidden", "true");
@@ -387,7 +408,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     }
     if (s.chart && Array.isArray(s.chart.points) && s.chart.points.length >= 2) {
       var last = s.chart.points[s.chart.points.length - 1];
-      c.appendChild(sparkline(s.chart.points, 320, 70, String(last.y) + (s.chart.unit || "")));
+      c.appendChild(sparkline(s.chart.points, 320, 70, String(last.y) + (s.chart.unit || ""), s.chart.type));
     }
     if ((s.points || []).length) {
       var ul = el("ul", "points");
@@ -534,7 +555,6 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
   function setTab(tab) {
     state.tab = tab;
-    store.set("tab", tab);
     ["today", "read", "archive"].forEach(function (k) {
       document.getElementById("v-" + k).hidden = k !== tab;
     });
@@ -550,6 +570,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     return getJSON("data/" + date + ".json").then(function (issue) {
       state.issue = issue;
       state.read = new Set(store.get("read:" + date) || []);
+      try { history.replaceState(null, "", "#" + date); } catch (e) {}
       renderToday();
     }).catch(function () {
       state.issue = null;

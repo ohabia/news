@@ -79,3 +79,23 @@ test("rejects hero.value over 12 chars", () => {
   const s = sample(); s.hero.value = "12,345,678,901";
   assert.match(errs(s), /hero\.value/);
 });
+test("null story is reported, not thrown", () => {
+  const s = sample(); s.stories[2] = null;
+  assert.match(errs(s), /stories\[2\]/);
+});
+test("rejects more than 3 high stories", () => {
+  const s = sample(); s.stories.slice(0, 4).forEach(x => { x.importance = "high"; });
+  assert.match(errs(s), /high/);
+});
+test("rejects more than 4 markets", () => {
+  const s = sample(); s.markets = [...s.markets, ...s.markets];
+  assert.match(errs(s), /markets/);
+});
+test("rejects change without dir", () => {
+  const s = sample(); delete s.hero.dir;
+  assert.match(errs(s), /hero\.dir/);
+});
+test("rejects upcoming.when over 12 chars", () => {
+  const s = sample(); s.upcoming[0].when = "2026年10月15日 周三 上午";
+  assert.match(errs(s), /upcoming\[0\]\.when/);
+});

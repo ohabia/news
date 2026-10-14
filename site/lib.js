@@ -57,25 +57,31 @@
       str(h.label, "hero.label", 0, true);
       str(h.value, "hero.value", 12, true);
       if (h.dir != null) oneOf(h.dir, DIRS, "hero.dir");
+      else if (h.change) err("hero.dir: required when change is set");
       if (h.series != null) series(h.series, "hero.series");
       if (!h.source) err("hero.source: required");
       else url(h.source.url, "hero.source.url");
     }
 
+    if ((issue.markets || []).length > 4) err("markets: " + issue.markets.length + " items, max 4");
     (issue.markets || []).forEach(function (m, i) {
       var p = "markets[" + i + "]";
+      if (!m || typeof m !== "object") return err(p + ": not an object");
       str(m.label, p + ".label", 0, true);
       str(m.value, p + ".value", 0, true);
       if (m.dir != null) oneOf(m.dir, DIRS, p + ".dir");
+      else if (m.change) err(p + ".dir: required when change is set");
       url(m.source_url, p + ".source_url");
     });
 
     if (!Array.isArray(issue.stories)) err("stories: must be an array");
     else {
       if (issue.stories.length > MAX_STORIES) err("stories: " + issue.stories.length + " items, max " + MAX_STORIES);
-      var seen = {};
+      var seen = {}, high = 0;
       issue.stories.forEach(function (s, i) {
         var p = "stories[" + i + "]";
+        if (!s || typeof s !== "object") return err(p + ": not an object");
+        if (s.importance === "high") high++;
         if (!s.id) err(p + ".id: required");
         else if (seen[s.id]) err(p + ".id: duplicate " + s.id);
         seen[s.id] = true;
@@ -97,10 +103,12 @@
         if (!Array.isArray(s.sources) || !s.sources.length) err(p + ".sources: at least 1");
         else s.sources.forEach(function (x, j) { url(x && x.url, p + ".sources[" + j + "].url"); });
       });
+      if (high > 3) err("stories: " + high + " marked high importance, max 3");
     }
 
     (issue.upcoming || []).forEach(function (u, i) {
-      str(u.when, "upcoming[" + i + "].when", 0, true);
+      if (!u || typeof u !== "object") return err("upcoming[" + i + "]: not an object");
+      str(u.when, "upcoming[" + i + "].when", 12, true);
       str(u.what, "upcoming[" + i + "].what", 30, true);
     });
 

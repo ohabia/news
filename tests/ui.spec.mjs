@@ -27,7 +27,7 @@ async function open(browser, scheme, issue = sample, init) {
   await page.route("**/data/2026-10-13.json", r => r.fulfill({ json: { ...sample, date: "2026-10-13", stories: sample.stories.slice(0, 3) } }));
   await utf8(page);
   await page.goto(URL0);
-  await page.waitForSelector("[data-view='today'] .hero, [data-view='today'] .mix");
+  await page.waitForSelector("[data-view='today'] .hero, [data-view='today'] .mix, [data-view='today'] .card.empty:not(.loading)");
   return { page, errors };
 }
 
@@ -141,6 +141,37 @@ try {
     await page.waitForSelector("[data-view='today'] .empty");
     await page.click("nav.tabbar [data-tab='read']");
     assert.equal(await page.locator(".slide[data-id]").count(), 0);
+    await page.close();
+  });
+
+  await check("zero-story issue shows a designed empty card on 今天", async () => {
+    const zero = { ...sample, stories: [] };
+    delete zero.hero; delete zero.markets;
+    const { page, errors } = await open(browser, "light", zero).catch(async e => { throw e; });
+    assert.equal(await page.locator("[data-view='today'] .tldr").count(), 0);
+    assert.match(await page.locator("[data-view='today'] .empty").innerText(), /没有/);
+    assert.deepEqual(errors, []);
+    await page.close();
+  });
+
+  await check("archived issue title does not say 今天", async () => {
+    const { page } = await open(browser, "light");
+    assert.match(await page.locator("[data-view='today'] h1").innerText(), /今天/);
+    await page.click("nav.tabbar [data-tab='archive']");
+    await page.click(".archive-item[data-date='2026-10-13']");
+    await page.waitForSelector("[data-view='today']:not([hidden]) .mix");
+    const h1 = await page.locator("[data-view='today'] h1").innerText();
+    assert.doesNotMatch(h1, /今天/);
+    assert.match(h1, /10月13日/);
+    await page.close();
+  });
+
+  await check("bar chart draws bars", async () => {
+    const b = structuredClone(sample);
+    b.stories[0].chart.type = "bar";
+    const { page } = await open(browser, "light", b);
+    await page.click("nav.tabbar [data-tab='read']");
+    assert.equal(await page.locator(".slide[data-id='s1'] .spark rect.barmark").count(), 3);
     await page.close();
   });
 
