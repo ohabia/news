@@ -55,7 +55,7 @@
     if (issue.hero != null) {
       var h = issue.hero;
       str(h.label, "hero.label", 0, true);
-      str(h.value, "hero.value", 0, true);
+      str(h.value, "hero.value", 12, true);
       if (h.dir != null) oneOf(h.dir, DIRS, "hero.dir");
       if (h.series != null) series(h.series, "hero.series");
       if (!h.source) err("hero.source: required");

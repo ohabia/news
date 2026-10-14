@@ -106,7 +106,7 @@ docs/superpowers/specs/ # 本文档
 
 ## 5. 定时任务（Routine）
 
-- 新建 Routine，每天 **06:50 America/Los_Angeles**，每次新开会话，只开推送通知。
+- 新建 Routine，每天 **05:20 America/Los_Angeles**（旧任务实测约 90 分钟，保证 7 点前后可读），每次新开会话，只开推送通知。
 - 旧 Routine `trig_01XeM4XfCyypo8x2pYVb2ja4`（已被用户停用）保持停用，不删除。
 - 核查规则来源：旧 Routine 的完整提示词（可用 `get_trigger trig_01XeM4XfCyypo8x2pYVb2ja4` 读取）。保留其“时间纪律”、阶段二全部核查项、可信度分级与 APPROVE/HOLD/REJECT 准入规则；去掉其长文格式规范和 Gmail 投递。
 - 流程：发现 → 核查 → 编辑成 JSON → 自审 → 发布到固定 Artifact → 推送摘要。保留原任务的时间纪律与核查规则，去掉长文模板。

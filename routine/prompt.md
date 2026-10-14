@@ -118,12 +118,12 @@
 
 ## 5. 发布
 
-1. Artifact 工具 `action: "read"`，同一 `url`，`path: "data/index.json"`，记下保存位置 **IDX**。若不存在，在 `workspace/index.json` 写入 `{"issues":[]}` 作为 IDX。
+1. Artifact 工具 `action: "read"`，同一 `url`，`paths: ["data/index.json", "data/DATE.json"]`，记下 `data/index.json` 的保存位置 **IDX**。若 `data/index.json` 不存在，在 `workspace/index.json` 写入 `{"issues":[]}` 作为 IDX。`data/DATE.json` 不存在是正常的（今天第一次运行）；若已存在，说明今天之前跑过，本次会用新内容覆盖它。
 2. 更新索引（headline 用第一条新闻的标题）：
    ```bash
    node -e 'const L=require(process.argv[1]);const fs=require("fs");const idx=JSON.parse(fs.readFileSync(process.argv[2],"utf8"));const is=JSON.parse(fs.readFileSync(process.argv[3],"utf8"));const out=L.upsertIndex(idx,{date:is.date,count:is.stories.length,headline:(is.stories[0]||{}).title||""});fs.writeFileSync("workspace/index.json",JSON.stringify(out));console.log(out.issues.length,"issues")' "LIB" "IDX" "workspace/DATE.json"
    ```
-3. Artifact 工具发布（`action: "publish"`）：`url` = 固定地址，`files` = `{"data/DATE.json": "workspace/DATE.json", "data/index.json": "workspace/index.json"}`。**只上传这两个文件，不要改动 `index.html` 和 `lib.js`，不要新建 artifact。**
+3. Artifact 工具发布（`action: "publish"`）：`url` = 固定地址，`files` = `{"data/DATE.json": "workspace/DATE.json", "data/index.json": "workspace/index.json"}`。**只上传这两个文件，不要改动 `index.html` 和 `lib.js`，不要新建 artifact。** 若工具以"未读取过该路径"为由拒绝覆盖 `data/DATE.json` 或 `data/index.json`，先用 `action: "read"` 读取被拒的路径，再原样重试发布；仍被拒则加上 `overwrite_unread: ["data/DATE.json"]` 重试。
    - 如果工具要求提供页面文件：先 `action: "read"`、`path: "index.html"` 下载现有页面，把下载到的文件原样作为 `file_path` 再发布一次（不改内容）。
    - 如果因版本冲突被拒绝：按工具返回的最新版本重新读取 `data/index.json`，重做第 2 步，再发布。
 4. 发布失败重试一次；仍失败，就把 `workspace/DATE.json` 的完整内容输出到会话里，并在通知中写明"发布失败"及原因。

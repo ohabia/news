@@ -75,3 +75,7 @@ test("upsertIndex", () => {
   const many = { issues: Array.from({ length: 61 }, (_, i) => ({ date: `2026-01-${String(i).padStart(2, "0")}` })) };
   assert.equal(L.upsertIndex(many, { date: "2026-10-14", count: 1, headline: "x" }).issues.length, 60);
 });
+test("rejects hero.value over 12 chars", () => {
+  const s = sample(); s.hero.value = "12,345,678,901";
+  assert.match(errs(s), /hero\.value/);
+});

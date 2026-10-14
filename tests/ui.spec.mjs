@@ -113,6 +113,37 @@ try {
     await page.close();
   });
 
+  await check("small phone: nav row clear of tab bar, paging returns to card top", async () => {
+    const tall = structuredClone(sample);
+    tall.stories.forEach(st => { st.points = ["这是一条刚好三十五个字的要点用来测试换行和高度是否正常的示例文本内容啊", "第二条要点", "第三条要点"]; });
+    const page = await browser.newPage({ viewport: { width: 360, height: 640 } }); page.setDefaultTimeout(8000);
+    await utf8(page);
+    await page.route("**/data/index.json", r => r.fulfill({ json: index }));
+    await page.route("**/data/2026-10-14.json", r => r.fulfill({ json: tall }));
+    await page.goto(URL0);
+    await page.waitForSelector(".mix");
+    await page.click("nav.tabbar [data-tab='read']");
+    const nav = await page.locator(".navrow").boundingBox();
+    const bar = await page.locator(".tabbar .capsule").boundingBox();
+    assert.ok(nav.y + nav.height <= bar.y, `navrow bottom ${nav.y + nav.height} overlaps tab bar top ${bar.y}`);
+    await page.evaluate(() => window.scrollTo(0, 400));
+    await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(600);
+    assert.equal(await page.evaluate(() => Math.round(window.scrollY)), 0);
+    await page.close();
+  });
+
+  await check("failed archive load does not show previous issue's stories", async () => {
+    const { page } = await open(browser, "light");
+    await page.route("**/data/2026-10-13.json", r => r.fulfill({ status: 500, body: "x" }));
+    await page.click("nav.tabbar [data-tab='archive']");
+    await page.click(".archive-item[data-date='2026-10-13']");
+    await page.waitForSelector("[data-view='today'] .empty");
+    await page.click("nav.tabbar [data-tab='read']");
+    assert.equal(await page.locator(".slide[data-id]").count(), 0);
+    await page.close();
+  });
+
   await check("empty state when no issues", async () => {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 } }); page.setDefaultTimeout(8000);
     await utf8(page);
