@@ -33,6 +33,15 @@
 
 **来源**：优先第一方——公司公告、交易所公告（港交所披露易、上交所、深交所、SEC 8-K）、IR 页面、监管机构（证监会、工信部、国家统计局、市场监管总局、国家电影局）、官方发布会；票房/收视用猫眼专业版、灯塔专业版、国家电影局等。中文主流财经与科技媒体（财新、第一财经、界面、36氪、晚点LatePost、21世纪经济报道、澎湃）和国际媒体（Reuters、Bloomberg、FT、Nikkei、The Information、Variety、Hollywood Reporter）用于补充与交叉确认。热度和"刷屏"不是重要性依据。
 
+**搜索广度（硬性要求，不得提前收工）**：至少做 **25 次** WebSearch，覆盖下面每一格，每格至少 2 次，中文和英文查询都要有：
+
+| | 商业 | 科技 | 娱乐 |
+|---|---|---|---|
+| 中国 | 港股/A股公告、财报预告、融资并购、车企销量 | 大模型、芯片、手机、互联网平台 | 票房（猫眼/灯塔）、剧集游戏、流媒体 |
+| 海外 | 美股财报、并购、对华业务 | AI 公司、半导体、苹果/谷歌/微软/Meta | 好莱坞票房、流媒体、音乐游戏 |
+
+再用 WebFetch 打开至少 3 个汇总页（如新浪财经/第一财经/36氪的当日快讯页、Reuters/Bloomberg 的科技或中国版块）逐条筛。**候选少于 15 个就继续搜索，不要进入下一步。**
+
 找 15–25 个候选，存 `workspace/candidates.json`（每条：标题、地区、分类、发生了什么、三个时间、过去 24 小时新增了什么、第一方来源 URL、媒体来源 URL）。
 
 ## 2. 核查（fact-checker）
@@ -88,7 +97,7 @@
     "why": "≤50字，写影响机制：谁的成本/收入/竞争格局变了",
     "sources": [{"name": "来源名", "url": "https://..."}]
   }],
-  "upcoming?": [{"when": "10-15 周三", "what": "≤30字，已确定的日程"}]
+  "upcoming?": [{"when": "≤12字，如 10-15 周三", "what": "≤30字，已确定的日程"}]
 }
 ```
 
@@ -99,7 +108,7 @@
 - `why` 必须写影响机制，不写"意义重大""影响深远"这类空话。
 - `tldr` 正好 3 条，是今天最重要的三件事，不是标题复读。
 - **hero**：优先用当天头条新闻里已核实的关键数字；否则用一个与中国商业/科技相关的市场指标（如恒生科技指数）最近 5 个交易日收盘，每个点都必须来自你实际打开过的页面。拿不到可靠序列就省略 `series`，拿不到可靠数值就省略整个 `hero`。有 `change` 时必须同时给出 `dir`。
-- **markets**：最多 4 个（如恒生指数、上证指数、纳指、美元/人民币），只放核实过的收盘数据。
+- **markets**：最多 4 个（如恒生指数、上证指数、纳指、美元/人民币），只放核实过的收盘数据；有 `change` 时必须同时给出 `dir`。
 - **upcoming**：未来 72 小时已确定的日程（财报、数据发布、发布会、上映），不得把预测写成事实。
 - 不使用 emoji。`dir` 表示涨跌方向；页面按美股习惯显示（绿涨红跌，带 ▲▼）。
 
@@ -118,16 +127,19 @@
 
 ## 5. 发布
 
-1. Artifact 工具 `action: "read"`，同一 `url`，`paths: ["data/index.json", "data/DATE.json"]`，记下 `data/index.json` 的保存位置 **IDX**。若 `data/index.json` 不存在，在 `workspace/index.json` 写入 `{"issues":[]}` 作为 IDX。`data/DATE.json` 不存在是正常的（今天第一次运行）；若已存在，说明今天之前跑过，本次会用新内容覆盖它。
-2. 更新索引（headline 用第一条新闻的标题）：
+这个 Artifact 工具**不能只上传数据文件**：每次发布都必须同时带上页面文件（`file_path`），而且发布前必须先"查看"过线上最新版本。按下面顺序做：
+
+1. Artifact `action: "read"`，只传 `url`（不传 `path`）——这一步是"查看"线上版本，返回内容不用细读。
+2. Artifact `action: "read"`，同一 `url`，`paths: ["index.html", "data/index.json", "data/DATE.json"]`。记下 `index.html` 的保存位置 **PAGE**、`data/index.json` 的保存位置 **IDX**。`data/DATE.json` 不存在是正常的（今天第一次运行）。若 `data/index.json` 不存在，在 `workspace/index.json` 写入 `{"issues":[]}` 作为 IDX。
+3. 更新索引（headline 用第一条新闻的标题）：
    ```bash
    node -e 'const L=require(process.argv[1]);const fs=require("fs");const idx=JSON.parse(fs.readFileSync(process.argv[2],"utf8"));const is=JSON.parse(fs.readFileSync(process.argv[3],"utf8"));const out=L.upsertIndex(idx,{date:is.date,count:is.stories.length,headline:(is.stories[0]||{}).title||""});fs.writeFileSync("workspace/index.json",JSON.stringify(out));console.log(out.issues.length,"issues")' "LIB" "IDX" "workspace/DATE.json"
    ```
-3. Artifact 工具发布（`action: "publish"`）：`url` = 固定地址，`files` = `{"data/DATE.json": "workspace/DATE.json", "data/index.json": "workspace/index.json"}`。**只上传这两个文件，不要改动 `index.html` 和 `lib.js`，不要新建 artifact。** 若工具以"未读取过该路径"为由拒绝覆盖 `data/DATE.json` 或 `data/index.json`，先用 `action: "read"` 读取被拒的路径，再原样重试发布；仍被拒则加上 `overwrite_unread: ["data/DATE.json"]` 重试。
-   - 如果工具要求提供页面文件：先 `action: "read"`、`path: "index.html"` 下载现有页面，把下载到的文件原样作为 `file_path` 再发布一次（不改内容）。
-   - 如果因版本冲突被拒绝：按工具返回的最新版本重新读取 `data/index.json`，重做第 2 步，再发布。
-4. 发布失败重试一次；仍失败，就把 `workspace/DATE.json` 的完整内容输出到会话里，并在通知中写明"发布失败"及原因。
-5. 发布成功后，用 Artifact `action: "read"`、`path: "data/index.json"` 确认第一项是今天的日期。
+4. Artifact `action: "publish"`：`url` = 固定地址，`file_path` = **PAGE**（原样，不改内容），`files` = `{"data/DATE.json": "workspace/DATE.json", "data/index.json": "workspace/index.json"}`。不要动 `lib.js`，不要新建 artifact。
+   - 若被拒且提示有更新的版本：从第 1 步重来（重新查看、重新下载 PAGE 和 IDX、重做第 3 步），再发布。不要原样重发被拒的内容。
+   - 若以"未读取过该路径"为由拒绝：把被拒路径加入 `overwrite_unread` 重试。
+5. 仍失败就再试一次；还失败，把 `workspace/DATE.json` 全文输出到会话里，并在通知中写明"发布失败"及原因。
+6. 发布成功后，用 Artifact `action: "read"`、`path: "data/index.json"` 确认第一项是今天的日期。
 
 ## 6. 通知（最后一条消息）
 
