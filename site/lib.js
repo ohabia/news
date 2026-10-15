@@ -7,7 +7,9 @@
   var IMPORTANCE = ["high", "medium"];
   var CREDIBILITY = ["confirmed", "credible", "developing"];
   var DIRS = ["up", "down", "flat"];
-  var MAX_STORIES = 10;
+  var MAX_STORIES = 20;
+  var MAX_HIGH = 5;
+  var IMAGE_SRC = /^img\/\d{4}-\d{2}-\d{2}\/[A-Za-z0-9_-]+\.(jpg|jpeg|png|webp)$/;
 
   function safeUrl(u) {
     if (typeof u !== "string") return null;
@@ -95,6 +97,10 @@
         if (!Array.isArray(s.points) || s.points.length < 1 || s.points.length > 3) err(p + ".points: 1-3 items");
         else s.points.forEach(function (t, j) { str(t, p + ".points[" + j + "]", 35, true); });
         if (s.headline_number != null) str(s.headline_number.value, p + ".headline_number.value", 10, true);
+        if (s.image != null) {
+          if (!s.image || typeof s.image.src !== "string" || !IMAGE_SRC.test(s.image.src)) err(p + ".image.src: must be img/YYYY-MM-DD/<name>.jpg|png|webp");
+          if (s.image && s.image.credit != null) str(s.image.credit, p + ".image.credit", 20, false);
+        }
         if (s.chart != null) {
           oneOf(s.chart.type, ["line", "bar"], p + ".chart.type");
           series(s.chart.points, p + ".chart.points");
@@ -103,7 +109,7 @@
         if (!Array.isArray(s.sources) || !s.sources.length) err(p + ".sources: at least 1");
         else s.sources.forEach(function (x, j) { url(x && x.url, p + ".sources[" + j + "].url"); });
       });
-      if (high > 3) err("stories: " + high + " marked high importance, max 3");
+      if (high > MAX_HIGH) err("stories: " + high + " marked high importance, max " + MAX_HIGH);
     }
 
     (issue.upcoming || []).forEach(function (u, i) {
@@ -156,9 +162,18 @@
     return { issues: issues.slice(0, keep) };
   }
 
+  // Published image paths (img/YYYY-MM-DD/...) older than keepDays before `today`.
+  function staleImages(paths, today, keepDays) {
+    var cutoff = Date.parse(today + "T00:00:00Z") - keepDays * 86400000;
+    return (paths || []).filter(function (p) {
+      var m = /^img\/(\d{4}-\d{2}-\d{2})\//.exec(p);
+      return m && Date.parse(m[1] + "T00:00:00Z") < cutoff;
+    });
+  }
+
   var api = {
     validateIssue: validateIssue, mixStats: mixStats, sparkGeometry: sparkGeometry,
-    changeView: changeView, safeUrl: safeUrl, upsertIndex: upsertIndex
+    changeView: changeView, safeUrl: safeUrl, upsertIndex: upsertIndex, staleImages: staleImages
   };
   root.NewsLib = api;
   if (typeof module === "object" && module.exports) module.exports = api;

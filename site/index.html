@@ -137,6 +137,11 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .why b{display:block;font-size:12px;font-weight:500;color:var(--ink-3);margin-bottom:2px}
 .sources{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
 .sources a{color:var(--ink-2);text-underline-offset:3px;overflow-wrap:anywhere}
+.cover-wrap{margin:-20px -20px 0;position:relative;border-radius:var(--r-xl) var(--r-xl) 0 0;overflow:hidden;aspect-ratio:16/9;max-width:none;background:var(--well)}
+.cover{display:block;width:100%;height:100%;object-fit:cover}
+.credit{position:absolute;right:10px;bottom:8px;font-size:11px;color:#fff;background:rgba(0,0,0,.45);padding:2px 8px;border-radius:999px}
+.read-orig{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 16px;border-radius:999px;background:var(--well);color:var(--ink);font-size:14px;font-weight:500;text-decoration:none}
+.read-orig svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .navrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 4px}
 .navbtn{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--card-edge);box-shadow:var(--shadow);display:grid;place-items:center}
 .navbtn:disabled{opacity:.35;cursor:default}
@@ -394,6 +399,15 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     c.dataset.id = s.id; c.dataset.i = i;
     c.setAttribute("aria-roledescription", "slide");
     c.setAttribute("aria-label", (i + 1) + " / " + n);
+    if (s.image && /^img\/[\w\/.-]+$/.test(s.image.src || "") && s.image.src.indexOf("..") < 0) {
+      var fig = el("figure", "cover-wrap");
+      var im = el("img", "cover");
+      im.src = s.image.src; im.alt = s.title || ""; im.loading = "lazy"; im.decoding = "async";
+      im.addEventListener("error", function () { fig.remove(); });
+      fig.appendChild(im);
+      if (s.image.credit) fig.appendChild(el("figcaption", "credit", "图源 " + s.image.credit));
+      c.appendChild(fig);
+    }
     var tags = el("div", "tags");
     if (s.importance === "high") tags.appendChild(el("span", "tag key", "重点"));
     tags.appendChild(el("span", "tag", REGION[s.region] || "海外"));
@@ -424,6 +438,15 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     src.appendChild(el("span", null, (CRED[s.credibility] || "") + " · 来源"));
     (s.sources || []).forEach(function (x) { var a = link(x.name, x.url); if (a) src.appendChild(a); });
     c.appendChild(src);
+    var first = (s.sources || []).map(function (x) { return L.safeUrl(x.url); }).filter(Boolean)[0];
+    if (first) {
+      var ro = el("a", "read-orig", "阅读原文");
+      ro.href = first; ro.target = "_blank"; ro.rel = "noopener";
+      var ri = svg("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" });
+      ri.appendChild(svg("path", { d: "M14 5h5v5M19 5l-8 8M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4" }));
+      ro.appendChild(ri);
+      c.appendChild(ro);
+    }
     return c;
   }
 

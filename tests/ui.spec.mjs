@@ -175,6 +175,33 @@ try {
     await page.close();
   });
 
+  await check("story image and read-original link", async () => {
+    const withImg = structuredClone(sample);
+    withImg.stories[0].image = { src: "img/2026-10-14/s1.png", credit: "示例来源" };
+    withImg.stories[1].image = { src: "img/2026-10-14/missing.png" };
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } }); page.setDefaultTimeout(8000);
+    await utf8(page);
+    const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
+    await page.route("**/img/2026-10-14/s1.png", r => r.fulfill({ body: png, contentType: "image/png" }));
+    await page.route("**/img/2026-10-14/missing.png", r => r.fulfill({ status: 404, body: "" }));
+    await page.route("**/data/index.json", r => r.fulfill({ json: index }));
+    await page.route("**/data/2026-10-14.json", r => r.fulfill({ json: withImg }));
+    await page.goto(URL0);
+    await page.waitForSelector(".mix");
+    await page.click("nav.tabbar [data-tab='read']");
+    await page.waitForTimeout(400);
+    const img = page.locator(".slide[data-id='s1'] img.cover");
+    assert.equal(await img.count(), 1);
+    assert.equal(await img.getAttribute("src"), "img/2026-10-14/s1.png");
+    assert.match(await page.locator(".slide[data-id='s1'] .credit").innerText(), /示例来源/);
+    assert.equal(await page.locator(".slide[data-id='s2'] img.cover").count(), 0);
+    const btn = page.locator(".slide[data-id='s1'] a.read-orig");
+    assert.equal(await btn.getAttribute("href"), "https://example.com/a");
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);
+    await page.screenshot({ path: root + "tests/out/light-image.png" });
+    await page.close();
+  });
+
   await check("empty state when no issues", async () => {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 } }); page.setDefaultTimeout(8000);
     await utf8(page);

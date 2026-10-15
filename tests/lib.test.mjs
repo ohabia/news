@@ -12,8 +12,12 @@ test("sample issue is valid", () => {
   assert.deepEqual(r.errors, []);
   assert.equal(r.ok, true);
 });
-test("rejects more than 10 stories", () => {
-  const s = sample(); s.stories.push({ ...s.stories[0], id: "s11" });
+test("accepts up to 20 stories, rejects 21", () => {
+  const s = sample();
+  const extra = n => Array.from({ length: n }, (_, i) => ({ ...s.stories[3], id: "x" + i, importance: "medium" }));
+  s.stories = s.stories.concat(extra(10));
+  assert.deepEqual(L.validateIssue(s).errors, []);
+  s.stories.push({ ...s.stories[3], id: "x99", importance: "medium" });
   assert.match(errs(s), /stories/);
 });
 test("rejects unknown category", () => {
@@ -83,8 +87,8 @@ test("null story is reported, not thrown", () => {
   const s = sample(); s.stories[2] = null;
   assert.match(errs(s), /stories\[2\]/);
 });
-test("rejects more than 3 high stories", () => {
-  const s = sample(); s.stories.slice(0, 4).forEach(x => { x.importance = "high"; });
+test("rejects more than 5 high stories", () => {
+  const s = sample(); s.stories.slice(0, 6).forEach(x => { x.importance = "high"; });
   assert.match(errs(s), /high/);
 });
 test("rejects more than 4 markets", () => {
@@ -98,4 +102,18 @@ test("rejects change without dir", () => {
 test("rejects upcoming.when over 12 chars", () => {
   const s = sample(); s.upcoming[0].when = "2026年10月15日 周三 上午";
   assert.match(errs(s), /upcoming\[0\]\.when/);
+});
+test("accepts a local story image", () => {
+  const s = sample(); s.stories[0].image = { src: "img/2026-10-14/s1.jpg", credit: "36氪" };
+  assert.deepEqual(L.validateIssue(s).errors, []);
+});
+test("rejects remote or traversal image paths", () => {
+  for (const src of ["https://a.com/x.jpg", "img/../index.html", "img/2026-10-14/s1.gif", "/img/2026-10-14/s1.jpg"]) {
+    const s = sample(); s.stories[0].image = { src };
+    assert.match(errs(s), /image/, src);
+  }
+});
+test("staleImages lists images older than the keep window", () => {
+  const files = ["img/2026-10-01/s1.jpg", "img/2026-10-14/s2.jpg", "data/index.json", "img/2026-10-14/s3.webp"];
+  assert.deepEqual(L.staleImages(files, "2026-10-14", 7), ["img/2026-10-01/s1.jpg"]);
 });
