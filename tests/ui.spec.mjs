@@ -126,6 +126,10 @@ try {
     const nav = await page.locator(".navrow").boundingBox();
     const bar = await page.locator(".tabbar .capsule").boundingBox();
     assert.ok(nav.y + nav.height <= bar.y, `navrow bottom ${nav.y + nav.height} overlaps tab bar top ${bar.y}`);
+    const nb = await page.locator(".navrow .navbtn[aria-label='下一条']").boundingBox();
+    assert.ok(nb.x + nb.width / 2 > 360 * 0.6, `next button x ${nb.x} not on the right`);
+    assert.ok(nb.y + nb.height / 2 > 640 * 0.6, `next button y ${nb.y} not in thumb zone`);
+    assert.ok(nb.width >= 44 && nb.height >= 44);
     await page.evaluate(() => window.scrollTo(0, 400));
     await page.keyboard.press("ArrowRight");
     await page.waitForTimeout(600);

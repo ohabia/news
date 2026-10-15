@@ -142,8 +142,13 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .credit{position:absolute;right:10px;bottom:8px;font-size:11px;color:#fff;background:rgba(0,0,0,.45);padding:2px 8px;border-radius:999px}
 .read-orig{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 16px;border-radius:999px;background:var(--well);color:var(--ink);font-size:14px;font-weight:500;text-decoration:none}
 .read-orig svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.navrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 4px}
-.navbtn{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--card-edge);box-shadow:var(--shadow);display:grid;place-items:center}
+/* paging pill sits in the right-thumb zone, just above the tab bar */
+.reader{padding-bottom:76px}
+.navrow{position:fixed;z-index:6;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;
+  right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--tabbar-h) + 30px + env(safe-area-inset-bottom,0px));
+  background:var(--card);border:1px solid var(--card-edge);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.navrow .count{min-width:44px;text-align:center}
+.navbtn{width:52px;height:52px;border-radius:50%;background:var(--card);border:1px solid var(--card-edge);box-shadow:var(--shadow);display:grid;place-items:center}
 .navbtn:disabled{opacity:.35;cursor:default}
 .navbtn svg{width:18px;height:18px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .count{font-family:var(--f-num);font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
