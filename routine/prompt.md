@@ -30,11 +30,11 @@
 - **娱乐**：票房、剧集/综艺/游戏的重大数据与发行、流媒体、音乐与演出、明星相关的**商业**事件（代言、合约、公司层面），不要八卦。
 - **政治与宏观**：只在**直接改变商业或市场**时收录（关税、出口管制、行业监管、利率、汇率），并从"对生意的影响"角度写。纯政治、外交、战争新闻不收。
 
-**配额**：最多 **10 条**；目标 **中国 7 条 / 海外 3 条**；分类目标 **商业 4 / 科技 3 / 娱乐 3**，其中娱乐**至少 1 条、最好 2 条是中国的**（国内票房、剧集、综艺、游戏、音乐演出），好莱坞不能占满娱乐名额。科技新闻最容易找，**最多 4 条**，不能挤掉商业和娱乐。商业指的是具体公司的动态，不是股市和宏观数据。"中国"包括中国大陆、港澳台的公司、市场和监管，以及海外事件对中国企业的直接影响。合格新闻不够就少放，**宁缺毋滥**，不为凑比例降低标准。
+**条数**：质量都过关的话 **12–20 条**最好，上限 20 条；合格的少就少放（宁缺毋滥），但别因为偷懒只放几条。**比例**：中国 : 海外 ≈ 7 : 3；分类大致 **商业 40% / 科技 30% / 娱乐 30%**，科技不超过 40%（科技最好找，不能挤掉商业和娱乐）；娱乐里中国的至少占一半，好莱坞不能占满娱乐名额。商业指的是具体公司的动态，不是股市和宏观数据。"中国"包括中国大陆、港澳台的公司、市场和监管，以及海外事件对中国企业的直接影响。合格新闻不够就少放，**宁缺毋滥**，不为凑比例降低标准。
 
 **来源**：优先第一方——公司公告、交易所公告（港交所披露易、上交所、深交所、SEC 8-K）、IR 页面、监管机构（证监会、工信部、国家统计局、市场监管总局、国家电影局）、官方发布会；票房/收视用猫眼专业版、灯塔专业版、国家电影局等。中文主流财经与科技媒体（财新、第一财经、界面、36氪、晚点LatePost、21世纪经济报道、澎湃）和国际媒体（Reuters、Bloomberg、FT、Nikkei、The Information、Variety、Hollywood Reporter）用于补充与交叉确认。热度和"刷屏"不是重要性依据。
 
-**搜索广度（硬性要求，不得提前收工）**：至少做 **25 次** WebSearch，覆盖下面每一格，每格至少 2 次，中文和英文查询都要有：
+**搜索广度（硬性要求，不得提前收工）**：至少做 **35 次** WebSearch，覆盖下面每一格，每格至少 2 次，中文和英文查询都要有：
 
 | | 商业 | 科技 | 娱乐 |
 |---|---|---|---|
@@ -45,9 +45,9 @@
 
 **娱乐类的来源标准**：片方、平台或艺人工作室的官方账号公告，猫眼专业版、灯塔专业版、国家电影局的数据（可以通过主流媒体的转述引用），Variety、Deadline、The Hollywood Reporter、新浪娱乐、澎湃、界面文娱、娱乐资本论等专业媒体，都算合格来源；两家互相独立的专业媒体报道一致，就可以评为 HIGHLY_CREDIBLE。不要因为没有政府或交易所公告就把娱乐新闻全部刷掉，但"知情人士""据传"类的八卦仍然不收。
 
-再用 WebFetch 打开至少 3 个汇总页（如新浪财经/第一财经/36氪的当日快讯页、Reuters/Bloomberg 的科技或中国版块）逐条筛。**候选少于 15 个就继续搜索，不要进入下一步。**
+再用 WebFetch 打开至少 3 个汇总页（如新浪财经/第一财经/36氪的当日快讯页、Reuters/Bloomberg 的科技或中国版块）逐条筛。**候选少于 25 个就继续搜索，不要进入下一步。**
 
-找 15–25 个候选，存 `workspace/candidates.json`（每条：标题、地区、分类、发生了什么、三个时间、过去 24 小时新增了什么、第一方来源 URL、媒体来源 URL）。
+找 25–40 个候选，存 `workspace/candidates.json`（每条：标题、地区、分类、发生了什么、三个时间、过去 24 小时新增了什么、第一方来源 URL、媒体来源 URL）。
 
 ## 2. 核查（fact-checker）
 
@@ -103,6 +103,7 @@
     "chart?": {"type": "line|bar", "unit?": "万辆", "points": [{"x": "Q1", "y": 30}, {"x": "Q2", "y": 36}], "source_url": "https://..."},
     "points": ["≤35字", "≤35字", "≤35字"],
     "why": "≤50字，写影响机制：谁的成本/收入/竞争格局变了",
+    "image?": {"src": "img/DATE/s1.jpg", "credit": "≤20字，图片来源媒体名"},
     "sources": [{"name": "来源名", "url": "https://..."}]
   }],
   "upcoming?": [{"when": "≤12字，如 10-15 周三", "what": "≤30字，已确定的日程"}]
@@ -112,13 +113,73 @@
 写作规则：
 - 字数上限是硬限制（按字符计）。宁短勿长，每条读完不超过 20 秒。
 - `credibility` 映射：CONFIRMED→confirmed，HIGHLY_CREDIBLE→credible，DEVELOPING→developing。
-- `importance: "high"` 每期最多 3 条。stories 按重要性排序。
+- `importance: "high"` 每期最多 5 条。stories 按重要性排序。
+- `sources` 的**第一个链接必须是最值得点开读的原文报道或官方公告**（页面上的"阅读原文"按钮就指向它），不要放首页、搜索页或汇总页。
+- **可视化优先**：有核实过的关键数字就给 `headline_number`；有至少 2 个可比数据点（如季度销量、逐日票房、同比对比）就给 `chart`。目标是至少三分之一的条目带数字或图表。数据必须来自已核实页面，不得编造。
 - `why` 必须写影响机制，不写"意义重大""影响深远"这类空话。
 - `tldr` 正好 3 条，是今天最重要的三件事，不是标题复读。
 - **hero**：优先用当天头条新闻里已核实的关键数字；用业务数字（如交付量、门店数、用户数、票房、融资额），**不要用股价、指数或宏观数据**，每个点都必须来自你实际打开过的页面。拿不到可靠序列就省略 `series`，拿不到可靠数值就省略整个 `hero`。有 `change` 时必须同时给出 `dir`，且 `change` 必须是同一指标相对上一期的变化，并能在已核实数字里找到（不要把环比数字当成同比变化）。
 - **markets**：**不要输出这个字段**（读者不看股市）。
 - **upcoming**：未来 72 小时已确定的日程（新品发布会、上映、开售、财报日），不得把预测写成事实。
 - 不使用 emoji。`dir` 表示涨跌方向；页面按美股习惯显示（绿涨红跌，带 ▲▼）。
+
+## 3.5 配图
+
+给每条 APPROVE 的新闻尝试配一张原文配图（报道页面的 og:image）。先把下面的脚本写到 `workspace/grab_img.py`：
+
+```python
+#!/usr/bin/env python3
+"""Fetch an article's og:image, shrink it to <=800px wide JPEG, save to OUT.
+Usage: python3 grab_img.py ARTICLE_URL OUT.jpg   -> prints OK <bytes> or SKIP <reason>; exit 0 either way."""
+import html, io, re, subprocess, sys, urllib.parse
+
+UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1"
+
+
+def get(url, limit):
+    r = subprocess.run(["curl", "-sSL", "--max-time", "20", "--max-filesize", str(limit), "-A", UA, url],
+                       capture_output=True)
+    return r.stdout if r.returncode == 0 else b""
+
+
+def main(article, out):
+    page = get(article, 4_000_000).decode("utf-8", "ignore")
+    m = (re.search(r'<meta[^>]+(?:property|name)=["\'](?:og:image|twitter:image)(?::src)?["\'][^>]*content=["\']([^"\']+)', page, re.I)
+         or re.search(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\'](?:og:image|twitter:image)', page, re.I))
+    if not m:
+        return print("SKIP no og:image")
+    src = urllib.parse.urljoin(article, html.unescape(m.group(1).strip()))
+    data = get(src, 15_000_000)
+    if not data:
+        return print("SKIP download failed")
+    from PIL import Image
+    try:
+        im = Image.open(io.BytesIO(data))
+        im = im.convert("RGB")
+    except Exception as e:
+        return print("SKIP not an image:", e)
+    w, h = im.size
+    if w < 400 or h < 200 or w / h > 3 or h / w > 2:
+        return print(f"SKIP bad size {w}x{h} (likely a logo)")
+    if w > 800:
+        im = im.resize((800, round(h * 800 / w)))
+    im.save(out, "JPEG", quality=72, optimize=True, progressive=True)
+    import os
+    print("OK", os.path.getsize(out))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2])
+```
+
+然后对每条新闻，用它 `sources` 里第一个链接（原文）运行：
+
+```bash
+mkdir -p workspace/img/DATE
+python3 workspace/grab_img.py "<原文 URL>" "workspace/img/DATE/<id>.jpg"
+```
+
+输出 `OK` 就在该条加 `"image": {"src": "img/DATE/<id>.jpg", "credit": "<原文媒体名>"}`；输出 `SKIP` 就不加 `image`，也不要换别的图源或自己生成图片。用 Read 工具打开下载到的图片看一眼：是 logo、二维码、纯文字海报或与新闻无关的图就删掉、不加 `image`。
 
 ## 4. 自检（QA）
 
@@ -138,16 +199,20 @@
 这个 Artifact 工具**不能只上传数据文件**：每次发布都必须同时带上页面文件（`file_path`），而且发布前必须先"查看"过线上最新版本。按下面顺序做：
 
 1. Artifact `action: "read"`，只传 `url`（不传 `path`）——这一步是"查看"线上版本，返回内容不用细读。
-2. Artifact `action: "read"`，同一 `url`，`paths: ["index.html", "data/index.json", "data/DATE.json"]`。记下 `index.html` 的保存位置 **PAGE**、`data/index.json` 的保存位置 **IDX**。`data/DATE.json` 不存在是正常的（今天第一次运行）。若 `data/index.json` 不存在，在 `workspace/index.json` 写入 `{"issues":[]}` 作为 IDX。
+2. Artifact `action: "list"`，`url` 为固定地址，`scope: "files"`，把列出的所有已发布路径写进 `workspace/published.txt`（一行一个）。然后 Artifact `action: "read"`，同一 `url`，`paths: ["index.html", "data/index.json", "data/DATE.json"]`。记下 `index.html` 的保存位置 **PAGE**、`data/index.json` 的保存位置 **IDX**。`data/DATE.json` 不存在是正常的（今天第一次运行）。若 `data/index.json` 不存在，在 `workspace/index.json` 写入 `{"issues":[]}` 作为 IDX。
 3. 更新索引（headline 用第一条新闻的标题）：
    ```bash
    node -e 'const L=require(process.argv[1]);const fs=require("fs");const idx=JSON.parse(fs.readFileSync(process.argv[2],"utf8"));const is=JSON.parse(fs.readFileSync(process.argv[3],"utf8"));const out=L.upsertIndex(idx,{date:is.date,count:is.stories.length,headline:(is.stories[0]||{}).title||""});fs.writeFileSync("workspace/index.json",JSON.stringify(out));console.log(out.issues.length,"issues")' "LIB" "IDX" "workspace/DATE.json"
    ```
-4. Artifact `action: "publish"`：`url` = 固定地址，`file_path` = **PAGE**（原样，不改内容），`files` = `{"data/DATE.json": "workspace/DATE.json", "data/index.json": "workspace/index.json"}`。不要动 `lib.js`，不要新建 artifact。
+4. 算出要清理的旧图（只保留最近 14 天的配图）：
+   ```bash
+   node -e 'const L=require(process.argv[1]);const fs=require("fs");const p=fs.readFileSync("workspace/published.txt","utf8").split("\n").map(s=>s.trim()).filter(Boolean);console.log(JSON.stringify(L.staleImages(p,process.argv[2],14)))' "LIB" "DATE"
+   ```
+5. Artifact `action: "publish"`：`url` = 固定地址，`file_path` = **PAGE**（原样，不改内容），`files` = `{"data/DATE.json": "workspace/DATE.json", "data/index.json": "workspace/index.json"}`，再加上今天每张配图 `"img/DATE/<id>.jpg": "workspace/img/DATE/<id>.jpg"`，以及上一步列出的每个旧图路径 `"<旧图路径>": null`（删除）。不要动 `lib.js`，不要新建 artifact。
    - 若被拒且提示有更新的版本：从第 1 步重来（重新查看、重新下载 PAGE 和 IDX、重做第 3 步），再发布。不要原样重发被拒的内容。
    - 若以"未读取过该路径"为由拒绝：把被拒路径加入 `overwrite_unread` 重试。
-5. 仍失败就再试一次；还失败，把 `workspace/DATE.json` 全文输出到会话里，并在通知中写明"发布失败"及原因。
-6. 发布成功后，用 Artifact `action: "read"`、`path: "data/index.json"` 确认第一项是今天的日期。
+6. 仍失败就再试一次；还失败，把 `workspace/DATE.json` 全文输出到会话里，并在通知中写明"发布失败"及原因。
+7. 发布成功后，用 Artifact `action: "read"`、`path: "data/index.json"` 确认第一项是今天的日期。
 
 ## 6. 通知（最后一条消息）
 
@@ -159,4 +224,4 @@
 https://claude.ai/artifact/BVXAJfsgjVPQaf4TbfDaYZ
 ```
 
-如果中外比例明显偏离 7:3、商业或娱乐少于 2 条、没有中国娱乐、条数少于 5、或发布失败，在第二行之后加一行说明原因（≤30 字）。
+如果中外比例明显偏离 7:3、商业或娱乐少于 2 条、没有中国娱乐、条数少于 8、或发布失败，在第二行之后加一行说明原因（≤30 字）。
